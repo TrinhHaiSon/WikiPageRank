@@ -106,8 +106,8 @@ public class WikiPageRank {
             }
         }
         
-        ObjectFileOperations.writeObjectToFile("/home/trinhhaison/NetBeansProjects/WikiPageRank/adjacency_matrix", adjacencyMatrix);
-        ObjectFileOperations.writeObjectToFile("/home/trinhhaison/NetBeansProjects/WikiPageRank/adjacency_matrix_transpose", adjacencyMatrixTranspose);
+        ObjectFileOperations.writeObjectToFile("/home/huong/JavaCode/PlagiarismDetection/WikiPageRank/WikiPageRank/adjacency_matrix", adjacencyMatrix);
+        ObjectFileOperations.writeObjectToFile("/home/huong/JavaCode/PlagiarismDetection/WikiPageRank/WikiPageRank/adjacency_matrix_transpose", adjacencyMatrixTranspose);
     }
     
     public void calculatePageRankValues(long iterateNumber) throws IOException{
@@ -138,7 +138,7 @@ public class WikiPageRank {
         }
         
         pageRankVector = PageInfo.sortByValue(pageRankVector);
-        ObjectFileOperations.writeObjectToFile("/home/trinhhaison/NetBeansProjects/WikiPageRank/pagerank_vector", pageRankVector);
+        ObjectFileOperations.writeObjectToFile("/home/huong/JavaCode/PlagiarismDetection/WikiPageRank/WikiPageRank/pagerank_vector", pageRankVector);
     }
     
     /**
