@@ -35,19 +35,26 @@ import org.json.simple.parser.ParseException;
 public class PageInfo {
     long pageID;
     String pageTitle;
+    public static Map<String, Long> pageInfoMap;
 
     public PageInfo(String pageTitle) throws UnsupportedEncodingException, IOException, ParseException {
         this.pageTitle = pageTitle;
-        String infoUrl = "https://en.wikipedia.org/w/api.php?action=query&prop=info&format=json&formatversion=2&titles="+URLEncoder.encode(pageTitle, "UTF-8");
-        String json = getJSON(infoUrl);
-        JSONObject jo = (JSONObject) new JSONParser().parse(json);
-        JSONArray pages = (JSONArray)((Map)jo.get("query")).get("pages");
-        Map page = (Map)pages.get(0);
-        if(page.get("pageid") == null){
-            this.pageID = -1;
+        if(pageInfoMap.containsKey(pageTitle)){
+            this.pageID = pageInfoMap.get(pageTitle);
         }
         else{
-            this.pageID = (long) page.get("pageid");
+            String infoUrl = "https://en.wikipedia.org/w/api.php?action=query&prop=info&format=json&formatversion=2&titles="+URLEncoder.encode(pageTitle, "UTF-8");
+            String json = getJSON(infoUrl);
+            JSONObject jo = (JSONObject) new JSONParser().parse(json);
+            JSONArray pages = (JSONArray)((Map)jo.get("query")).get("pages");
+            Map page = (Map)pages.get(0);
+            if(page.get("pageid") == null){
+                this.pageID = -1;
+            }
+            else{
+                this.pageID = (long) page.get("pageid");
+            }
+            pageInfoMap.put(pageTitle, this.pageID);
         }
     }
 

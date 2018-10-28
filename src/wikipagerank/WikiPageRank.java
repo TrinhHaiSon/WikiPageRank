@@ -35,26 +35,31 @@ public class WikiPageRank {
         this.pageNumber = pageNumber;
         this.d = d;
         
+        PageInfo.pageInfoMap = new HashMap<>();
+        
         List<Long> queue = new ArrayList<>();
         PageInfo seedPage = new PageInfo(seedTitle);
         queue.add(seedPage.getPageID());
+        Set<Long> passedLink = new HashSet<>();
         
         long count = 0;
         long tempID;
         PageInfo tempPage;
         List<Long> linkIDs;
         Set<Long> tempSet;
-        Map<Long, Double> tempMap;
-        double transitionProbability;
+//        Map<Long, Double> tempMap;
+//        double transitionProbability;
         
-        pageRankVector = new HashMap<>();
-        pageRankVector.put(seedPage.getPageID(), 0.0);
+        passedLink.add(seedPage.getPageID());
+        
+//        pageRankVector = new HashMap<>();
+//        pageRankVector.put(seedPage.getPageID(), 0.0);
         
         adjacencyMatrix = new HashMap<>();
         adjacencyMatrix.put(seedPage.getPageID(), new HashSet<>());
         
-        adjacencyMatrixTranspose = new HashMap<>();
-        adjacencyMatrixTranspose.put(seedPage.getPageID(), new HashMap<>());
+//        adjacencyMatrixTranspose = new HashMap<>();
+//        adjacencyMatrixTranspose.put(seedPage.getPageID(), new HashMap<>());
         
         count++;
         
@@ -67,49 +72,51 @@ public class WikiPageRank {
             for(Long linkID : linkIDs){
                 
                 tempSet.add(linkID);
-                if(!pageRankVector.containsKey(linkID)){
+                if(!passedLink.contains(linkID)){
                     
-                    pageRankVector.put(linkID, 0.0);
+                    passedLink.add(linkID);
+//                    pageRankVector.put(linkID, 0.0);
                     adjacencyMatrix.put(linkID, new HashSet<>());
-                    tempMap = new HashMap<>();
-                    tempMap.put(tempID, 0.0);
-                    adjacencyMatrixTranspose.put(linkID, tempMap);
+//                    tempMap = new HashMap<>();
+//                    tempMap.put(tempID, 0.0);
+//                    adjacencyMatrixTranspose.put(linkID, tempMap);
                     queue.add(linkID);
                     
                     count++;
                     System.out.println(count);
                     if(count == pageNumber) break;
                 }
-                else{
-                    tempMap = adjacencyMatrixTranspose.get(linkID);
-                    tempMap.put(tempID, 0.0);
-                }
+//                else{
+//                    tempMap = adjacencyMatrixTranspose.get(linkID);
+//                    tempMap.put(tempID, 0.0);
+//                }
             }
         }
         
-        this.pageNumber = pageRankVector.size();
-        double initialPageRankValue = 1.0/this.pageNumber;
-        
-        for(Map.Entry<Long, Set<Long>> entry : adjacencyMatrix.entrySet()){
-            
-            pageRankVector.put(entry.getKey(), initialPageRankValue);
-            
-            tempSet = entry.getValue();
-            if(tempSet.size() > 0){
-                transitionProbability = 1.0/tempSet.size();
-                for(long linkID : tempSet){
-                    adjacencyMatrixTranspose.get(linkID).put(entry.getKey(), transitionProbability);
-                }
-            }
-            else{
-                for(Map.Entry<Long, Double> subEntry : pageRankVector.entrySet()){
-                    adjacencyMatrixTranspose.get(subEntry.getKey()).put(entry.getKey(), initialPageRankValue);
-                }
-            }
-        }
+//        this.pageNumber = pageRankVector.size();
+//        double initialPageRankValue = 1.0/this.pageNumber;
+//        
+//        for(Map.Entry<Long, Set<Long>> entry : adjacencyMatrix.entrySet()){
+//            
+//            pageRankVector.put(entry.getKey(), initialPageRankValue);
+//            
+//            tempSet = entry.getValue();
+//            if(tempSet.size() > 0){
+//                transitionProbability = 1.0/tempSet.size();
+//                for(long linkID : tempSet){
+//                    adjacencyMatrixTranspose.get(linkID).put(entry.getKey(), transitionProbability);
+//                }
+//            }
+//            else{
+//                for(Map.Entry<Long, Double> subEntry : pageRankVector.entrySet()){
+//                    adjacencyMatrixTranspose.get(subEntry.getKey()).put(entry.getKey(), initialPageRankValue);
+//                }
+//            }
+//        }
         
         ObjectFileOperations.writeObjectToFile("/home/huong/JavaCode/PlagiarismDetection/WikiPageRank/WikiPageRank/adjacency_matrix", adjacencyMatrix);
-        ObjectFileOperations.writeObjectToFile("/home/huong/JavaCode/PlagiarismDetection/WikiPageRank/WikiPageRank/adjacency_matrix_transpose", adjacencyMatrixTranspose);
+        System.out.println("Done");
+//        ObjectFileOperations.writeObjectToFile("/home/huong/JavaCode/PlagiarismDetection/WikiPageRank/WikiPageRank/adjacency_matrix_transpose", adjacencyMatrixTranspose);
     }
     
     public WikiPageRank(String pathToAdjacencyMatrixTransposeFile) throws IOException, FileNotFoundException, ClassNotFoundException{
@@ -163,15 +170,15 @@ public class WikiPageRank {
 //        double b = 1.0/a;
 //        System.out.println(b);
         
-        WikiPageRank pageRank = new WikiPageRank("/home/trinhhaison/NetBeansProjects/WikiPageRank/adjacency_matrix_transpose");
-        pageRank.calculatePageRankValues(100);
-        Map<Long, Double> pageRankVector = pageRank.pageRankVector;
-        PageInfo pageInfo;
-        
-        for(Map.Entry<Long, Double> entry : pageRankVector.entrySet()){
-            pageInfo = new PageInfo(entry.getKey());
-            System.out.println(pageInfo.getPageTitle() + "  " + entry.getValue());
-        }
+        WikiPageRank pageRank = new WikiPageRank("Ludwig van Beethoven", 25000L, 0.9);
+//        pageRank.calculatePageRankValues(100);
+//        Map<Long, Double> pageRankVector = pageRank.pageRankVector;
+//        PageInfo pageInfo;
+//        
+//        for(Map.Entry<Long, Double> entry : pageRankVector.entrySet()){
+//            pageInfo = new PageInfo(entry.getKey());
+//            System.out.println(pageInfo.getPageTitle() + "  " + entry.getValue());
+//        }
     }
     
 }
