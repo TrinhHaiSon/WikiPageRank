@@ -5,6 +5,8 @@
  */
 package wikipagerank;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -110,6 +112,16 @@ public class WikiPageRank {
         ObjectFileOperations.writeObjectToFile("/home/huong/JavaCode/PlagiarismDetection/WikiPageRank/WikiPageRank/adjacency_matrix_transpose", adjacencyMatrixTranspose);
     }
     
+    public WikiPageRank(String pathToAdjacencyMatrixTransposeFile) throws IOException, FileNotFoundException, ClassNotFoundException{
+        adjacencyMatrixTranspose = (Map<Long, Map<Long, Double>>)ObjectFileOperations.readObjectFromFile(pathToAdjacencyMatrixTransposeFile);
+        pageRankVector = new HashMap<>();
+        pageNumber = adjacencyMatrixTranspose.size();
+        double initialPageRankValue = 1.0/pageNumber;
+        for(Map.Entry<Long, Map<Long, Double>> entry : adjacencyMatrixTranspose.entrySet()){
+            pageRankVector.put(entry.getKey(), initialPageRankValue);
+        }
+    }
+    
     public void calculatePageRankValues(long iterateNumber) throws IOException{
         
         int count = 0;
@@ -121,15 +133,16 @@ public class WikiPageRank {
             tempPageRankVector = new HashMap<>();
             for(Map.Entry<Long, Double> entry : pageRankVector.entrySet()){
                 tempVector = adjacencyMatrixTranspose.get(entry.getKey());
-                tempPageRankValue = 0;
-                for(Map.Entry<Long, Double> subEntry : pageRankVector.entrySet()){
-                    if(tempVector.containsKey(subEntry.getKey())){
-                        tempPageRankValue += d * tempVector.get(subEntry.getKey()) * subEntry.getValue() + (1.0 - d) * initialPageRankValue;
-                    }
-                    else{
-                        tempPageRankValue += (1.0 - d) * initialPageRankValue;
-                    }
+                tempPageRankValue = 0.0;
+                for(Map.Entry<Long, Double> subEntry : tempVector.entrySet()){
+//                    if(tempVector.containsKey(subEntry.getKey())){
+                        tempPageRankValue += pageRankVector.get(subEntry.getKey()) * subEntry.getValue();
+//                    }
+//                    else{
+//                    }
                 }
+                tempPageRankValue *= d;
+                tempPageRankValue += (1.0 - d) * initialPageRankValue;
                 tempPageRankVector.put(entry.getKey(), tempPageRankValue);
             }
             pageRankVector = tempPageRankVector;
@@ -144,13 +157,13 @@ public class WikiPageRank {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws IOException, UnsupportedEncodingException, ParseException {
+    public static void main(String[] args) throws IOException, UnsupportedEncodingException, ParseException, FileNotFoundException, ClassNotFoundException {
         // TODO code application logic here
 //        int a = 7;
 //        double b = 1.0/a;
 //        System.out.println(b);
         
-        WikiPageRank pageRank = new WikiPageRank("Ludwig van Beethoven", 25000L, 0.9);
+        WikiPageRank pageRank = new WikiPageRank("/home/trinhhaison/NetBeansProjects/WikiPageRank/adjacency_matrix_transpose");
         pageRank.calculatePageRankValues(100);
         Map<Long, Double> pageRankVector = pageRank.pageRankVector;
         PageInfo pageInfo;
