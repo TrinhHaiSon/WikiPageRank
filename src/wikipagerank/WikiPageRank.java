@@ -170,7 +170,7 @@ public class WikiPageRank {
 //        double b = 1.0/a;
 //        System.out.println(b);
         
-        WikiPageRank pageRank = new WikiPageRank("Ludwig van Beethoven", 25000L, 0.9);
+        WikiPageRank pageRank = new WikiPageRank("Ludwig van Beethoven", 12500L, 0.9);
 //        pageRank.calculatePageRankValues(100);
 //        Map<Long, Double> pageRankVector = pageRank.pageRankVector;
 //        PageInfo pageInfo;
